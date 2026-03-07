@@ -1,699 +1,530 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-
-  <!-- 🌟 Preconnect & Preload Critical Assets -->
-  <!-- Preconnect to your font host for faster handshake -->
-  <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>BMB Instagram Downloader - Download Reels, Photos & Videos</title>
+  <meta name="description" content="Download Instagram reels, photos & videos in HD quality. Fast, responsive and easy to use."/>
+  <meta name="keywords" content="Instagram downloader, download instagram, download reels, download ig photo, instagram video, BMB"/>
+  <meta name="theme-color" content="#000000"/>
   
-  <!-- Preload your font stylesheet as a style asset -->
-  <link rel="preload" as="style" href="https://fonts.cdnfonts.com/css/fast">
+  <!-- PWA Links -->
+  <link rel="icon" href="/public/bmb.png"/>
+  <link rel="apple-touch-icon" href="/public/bmb.png"/>
+  <link rel="manifest" href="/public/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BMB Downloader">
   
-  <!-- Load CSS non-blocking, with a print-media fallback -->
-  <link
-    href="https://fonts.cdnfonts.com/css/fast"
-    rel="stylesheet"
-    media="print"
-    onload="this.media='all'">
-  <noscript>
-    <link href="https://fonts.cdnfonts.com/css/fast" rel="stylesheet">
-  </noscript>
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-  <!-- Elite Title & Description -->
-<title>Download Instagram Videos & Photos in HD – Free, No Watermark | InstaDL</title>
-  <meta name="description"
-        content="Free Instagram video, photo & story downloader in HD—no watermark, no login, ultra-fast in the U.S. with InstaDL™.">
-  <meta name="keywords"
-        content="instagram downloader, download instagram reels, download instagram photos, download instagram stories, instagram video downloader, HD instagram downloads, instagram no watermark, free insta downloader, instaDL"/>
-<link rel="canonical" href="https://www.instadl.org/" />
-
-<!-- Social Preview (OpenGraph) Tags -->
-<meta property="og:site_name"   content="Instagram Downloader" />
-<meta property="og:type"        content="website" />
-<meta property="og:title"       content="Instagram Downloader – Reels, Photos & Stories | InstaDL" />
-<meta property="og:description" content="Instantly save Instagram Reels, Stories, Photos & Carousels in HD — no watermark, no login." />
-<meta property="og:image"       content="https://www.instadl.org/og_image.png" />
-<meta property="og:url"         content="https://www.instadl.org/" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="BMB Instagram Downloader - Download Reels, Photos & Videos"/>
+  <meta property="og:description" content="Download Instagram reels, photos & videos quickly and securely."/>
+  <meta property="og:image" content="/public/bmb.png"/>
+  <meta property="og:type" content="website"/>
   
-  <!-- ✅ Fonts, Ads & Analytics (performance-tuned) -->
-<!-- 1. Preconnect + preload Font -->
-<link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.cdnfonts.com/css/fast">
-<link
-  href="https://fonts.cdnfonts.com/css/fast"
-  rel="stylesheet"
-  media="print"
-  onload="this.media='all'">
-<noscript>
-  <link href="https://fonts.cdnfonts.com/css/fast" rel="stylesheet">
-</noscript>
-
-<!-- 2. Google AdSense -->
-<script
-  async
-  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2035725815108237"
-  crossorigin="anonymous">
-</script>
-
-<!-- 3. Google Tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-01PYD112H4"></script>
-<script defer src="/js/gtag-init.js"></script>
-
-  <!-- SEO Meta Tags -->
-  <meta name="robots" content="index, follow" />
-  <meta name="google-adsense-account" content="ca-pub-2035725815108237" />
-  <link rel="icon" href="/favicon.ico" />
-
-   <!-- Tailwind & AlpineJS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-  <!-- Add this style block to push content below fixed bars and enable animations -->
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image"/>
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"/>
+  <meta name="monetag" content="ca769b8386d5c6123aff27b2c1be42cf">
+  
+  <!-- Main Styles - Same as original -->
   <style>
-    html { scroll-behavior: smooth; }
-    body { margin-top: 160px; }
-    .fade-in { animation: fadeIn 1.2s ease-in both; }
-    .slide-up { animation: slideUp 1.2s ease-out both; }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Segoe UI',sans-serif;background:#000;color:#f1fdf1;line-height:1.6;min-height:100vh}
+    nav{position:fixed;width:100%;top:0;left:0;background:rgba(0,0,0,.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.1);z-index:1000}
+    .nav-container{max-width:1280px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:4rem}
+    .logo{display:flex;align-items:center;gap:.75rem;cursor:pointer}
+    .logo img{height:2rem;width:2rem;border-radius:50%}
+    .logo span{font-size:1.25rem;font-weight:bold;color:#98ff98}
+    .nav-links{display:flex;gap:1.5rem}
+    .nav-links a{text-decoration:none;color:#fff;transition:.3s}
+    .nav-links a:hover{color:#98ff98}
+    .hamburger{display:none;flex-direction:column;cursor:pointer;gap:5px}
+    .hamburger span{height:3px;width:25px;background:#98ff98;transition:.3s}
+    .hamburger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+    .hamburger.active span:nth-child(2){opacity:0}
+    .hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+    .mobile-menu{display:none;background:#000;padding:1rem}
+    .mobile-menu.active{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+    .mobile-menu h3{color:#fff;margin-bottom:.5rem}
+    .mobile-menu a{color:#fff;padding:.25rem 0;text-decoration:none;display:block;transition:.3s}
+    .mobile-menu a:hover{color:#98ff98}
+    .main-content{max-width:900px;margin:0 auto;padding:6rem 1rem 3rem}
+    .card{background:rgba(255,255,255,.03);border-radius:1rem;padding:1.5rem;margin-bottom:1.5rem;border:1px solid rgba(255,255,255,.04)}
+    .title-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;justify-content:center;margin-bottom:1rem}
+    .ig-icon{display:flex;align-items:center;justify-content:center;height:44px;width:44px;border-radius:12px;background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%);color:#fff;font-weight:bold}
+    .ig-icon i{font-size:1.5rem}
+    .page-title{font-size:1.75rem;font-weight:700;color:#98ff98}
+    .subtitle{color:#aaa;text-align:center;margin-bottom:1rem}
+    .input-row{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;justify-content:center}
+    .text-input{flex:1;min-width:220px;padding:.75rem 1rem;border-radius:.5rem;border:1px solid rgba(255,255,255,.06);background:transparent;color:#fff}
+    .btn{border:none;background:#98ff98;color:#000;padding:.75rem 1.25rem;border-radius:.5rem;cursor:pointer;transition:.3s;font-weight:bold;display:inline-flex;align-items:center;justify-content:center;gap:.5rem}
+    .btn:hover{background:#7ae87a;transform:translateY(-1px)}
+    .btn:disabled{background:#666;color:#ccc;cursor:not-allowed;transform:none}
+    .btn-secondary{background:#444;color:#fff}
+    .btn-secondary:hover{background:#555}
+    .btn-small{padding:.4rem .75rem;font-size:.8rem}
+    .result-area{display:none;margin-top:1rem}
+    .post-header{margin-bottom:1rem}
+    .post-title{font-size:1.1rem;font-weight:600;color:#fff;margin-bottom:.35rem}
+    .post-meta{font-size:.9rem;color:#aaa}
+    .post-meta a{color:#98ff98;text-decoration:none}
+    .post-meta a:hover{text-decoration:underline}
+    .stats-row{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.5rem}
+    .stat-item{display:flex;align-items:center;gap:.35rem;color:#ccc;font-size:.85rem}
+    .stat-item i{color:#98ff98}
+    .time-info{font-size:.85rem;color:#888;margin-top:.25rem}
+    .content-section{margin-top:1rem;margin-bottom:1.5rem}
+    .type-badge{display:inline-block;padding:.35rem .75rem;border-radius:.5rem;background:linear-gradient(45deg,#fd5949,#d6249f);color:#fff;font-weight:bold;font-size:.85rem;margin-bottom:.75rem}
+    .description{color:#ddd;padding:1rem;background:rgba(255,255,255,.02);border-radius:.5rem;border-left:3px solid #98ff98;margin-bottom:1rem;white-space:pre-wrap}
+    .gallery-section{margin-top:1rem}
+    .gallery-title{color:#98ff98;font-weight:bold;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+    .image-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.75rem;margin-bottom:1rem}
+    .image-item{position:relative;border-radius:.5rem;overflow:hidden;aspect-ratio:1;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04)}
+    .image-item img{width:100%;height:100%;object-fit:cover;transition:.3s}
+    .image-item:hover img{transform:scale(1.05)}
+    .image-overlay{position:absolute;bottom:0;left:0;right:0;padding:.4rem;background:linear-gradient(to top,rgba(0,0,0,.85),transparent);display:flex;justify-content:center;opacity:0;transition:.3s}
+    .image-item:hover .image-overlay{opacity:1}
+    .download-section{margin-top:1.5rem}
+    .download-title{color:#98ff98;font-weight:bold;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+    .download-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.75rem;margin-bottom:1rem}
+    .download-card{padding:1rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:.75rem;display:flex;flex-direction:column;gap:.75rem}
+    .download-card-title{font-weight:600;color:#fff;display:flex;align-items:center;gap:.5rem}
+    .download-card-desc{color:#aaa;font-size:.85rem}
+    .comments-section{margin-top:1.5rem;padding:1rem;background:rgba(255,255,255,.02);border-radius:.75rem;border:1px solid rgba(255,255,255,.03)}
+    .comments-section h3{color:#98ff98;margin-bottom:.5rem}
+    .comment-item{margin-bottom:.5rem;font-size:.9rem;color:#ddd}
+    .comment-username{font-weight:600;color:#98ff98;margin-right:.35rem}
+    .actions{margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center}
+    .info{color:#aaa;font-size:.95rem;margin-top:.75rem}
+    .loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);backdrop-filter:blur(10px);z-index:2000;display:none;flex-direction:column;align-items:center;justify-content:center}
+    .loading-spinner{width:60px;height:60px;border:4px solid rgba(152,255,152,.3);border-top:4px solid #98ff98;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:1rem}
+    .loading-text{color:#98ff98;font-size:1.1rem;text-align:center}
+    @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+    .faq{margin-top:2rem;padding:1rem;border-radius:.75rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.03)}
+    .faq h3{color:#98ff98;margin-bottom:.5rem}
+    footer{background:#000;border-top:1px solid rgba(255,255,255,.1);padding:3rem 1rem 1.5rem;margin-top:3rem}
+    .footer-grid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;text-align:center}
+    .footer-info{text-align:center}
+    .footer-info p{margin-top:1rem;color:#aaa}
+    .footer-links h3{color:#fff;margin-bottom:1rem}
+    .footer-links a{display:block;color:#aaa;margin-bottom:.5rem;text-decoration:none}
+    .footer-links a:hover{color:#98ff98}
+    .social-links{margin-top:1.5rem}
+    .social-icons{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap}
+    .social-link{color:#aaa;padding:.5rem;border-radius:.5rem;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;gap:.5rem;transition:.3s;font-size:1.5rem}
+    .social-link:hover{color:#fff;background:rgba(152,255,152,.2)}
+    .footer-bottom{margin-top:2rem;text-align:center;color:#777;font-size:.875rem}
+    @media(max-width:768px){
+      .nav-links{display:none}.hamburger{display:flex}
+      .input-row{flex-direction:column;align-items:stretch}
+      .download-grid{grid-template-columns:1fr}
+      .image-gallery{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+      .stats-row{font-size:.8rem}
     }
-    @keyframes slideUp {
-      0%   { transform: translateY(30px); opacity: 0; }
-      100% { transform: translateY(0);     opacity: 1; }
-    }
-    .floating-ad { position: fixed; top: 120px; width: 160px; z-index: 50; }
-    .floating-ad-left { left: 10px; }
-    .floating-ad-right { right: 10px; }
-    @media (max-width: 1024px) { .floating-ad { display: none; } }
-  </style>
+    .swal2-popup{background:rgba(0,0,0,.95)!important;color:#f1fdf1!important;border:1px solid rgba(255,255,255,.1)!important}
+    .swal2-title{color:#98ff98!important}
+    .swal2-confirm{background:#3cb371!important}
+    .swal2-cancel{background:#666!important}
 
- <!-- Combined Schema.org JSON-LD -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebSite",
-      "name": "Instagram Downloader",
-      "url": "https://www.instadl.org/",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://www.instadl.org/?q={search_term_string}",
-        "query-input": "required name=search_term_string"
+    /* Install Notification Styles */
+    .install-notification {
+      position: fixed;
+      top: -350px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 400px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+      border: 1px solid rgba(152, 255, 152, 0.3);
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(152, 255, 152, 0.1);
+      z-index: 9999;
+      transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      backdrop-filter: blur(10px);
+    }
+
+    .install-notification.show {
+      top: 20px;
+    }
+
+    .notification-content {
+      padding: 20px;
+      position: relative;
+    }
+
+    .notification-close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 24px;
+      cursor: pointer;
+      transition: color 0.3s;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .notification-close:hover {
+      color: #98ff98;
+      background: rgba(152, 255, 152, 0.1);
+    }
+
+    .notification-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .notification-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: #98ff98;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .notification-icon i {
+      font-size: 30px;
+      color: #000;
+    }
+
+    .notification-title {
+      flex: 1;
+    }
+
+    .notification-title h3 {
+      color: #98ff98;
+      font-size: 1.2rem;
+      margin-bottom: 5px;
+    }
+
+    .notification-title p {
+      color: #ccc;
+      font-size: 0.85rem;
+    }
+
+    .notification-body {
+      margin-bottom: 20px;
+      color: #fff;
+      font-size: 1rem;
+      line-height: 1.5;
+      text-align: center;
+      padding: 10px 0;
+      background: rgba(152, 255, 152, 0.05);
+      border-radius: 10px;
+    }
+
+    .notification-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .install-btn {
+      flex: 2;
+      background: linear-gradient(135deg, #98ff98, #7ae87a);
+      border: none;
+      color: #000;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .install-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(152, 255, 152, 0.4);
+    }
+
+    .cancel-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .cancel-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    @media (max-width: 480px) {
+      .install-notification {
+        width: 95%;
       }
-    },
-    {
-      "@type": "Organization",
-      "name": "Instagram Downloader",
-      "url": "https://www.instadl.org",
-      "logo": "https://www.instadl.org/logo.png",
-      "sameAs": [
-        "https://twitter.com/instadl_org"
-      ]
-    },
-    {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "item": {
-            "@type": "WebPage",
-            "@id": "https://www.instadl.org/",
-            "url": "https://www.instadl.org/",
-            "name": "Videos"
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "item": {
-            "@type": "WebPage",
-            "@id": "https://www.instadl.org/reels.html",
-            "url": "https://www.instadl.org/reels.html",
-            "name": "Reels"
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "item": {
-            "@type": "WebPage",
-            "@id": "https://www.instadl.org/photo.html",
-            "url": "https://www.instadl.org/photo.html",
-            "name": "Photos"
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 4,
-          "item": {
-            "@type": "WebPage",
-            "@id": "https://www.instadl.org/story.html",
-            "url": "https://www.instadl.org/story.html",
-            "name": "Stories"
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 5,
-          "item": {
-            "@type": "WebPage",
-            "@id": "https://www.instadl.org/igtv.html",
-            "url": "https://www.instadl.org/igtv.html",
-            "name": "IGTV"
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 6,
-          "item": {
-            "@type": "WebPage",
-            "@id": "https://www.instadl.org/carousel.html",
-            "url": "https://www.instadl.org/carousel.html",
-            "name": "Carousel"
-          }
-        }
-      ]
-    }
-  ]
-}
-</script>
-</head>
-<body class="bg-gray-100 text-gray-800">
-
-<!-- Floating Side Ads -->
-<div class="floating-ad floating-ad-left">
-  <ins class="adsbygoogle"
-       style="display:block"
-       data-ad-client="ca-pub-2035725815108237"
-       data-ad-slot="1234567890"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
-<div class="floating-ad floating-ad-right">
-  <ins class="adsbygoogle"
-       style="display:block"
-       data-ad-client="ca-pub-2035725815108237"
-       data-ad-slot="0987654321"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
-
-<!-- 🖝 Top Navbar -->
-<nav class="absolute top-0 left-0 right-0 z-50 bg-white shadow-sm px-6 py-4 flex justify-between items-center">
-  <div class="flex items-center gap-2">
-    <img src="/logo.png" alt="InstaDL logo" class="h-6 w-auto" />
-  </div>
-  <div class="flex gap-6 text-sm text-gray-700 items-center">
-    <a href="/faq.html" class="hover:text-pink-500">FAQ</a>
-
-    <!-- Language switcher dropdown -->
-    <div x-data="{ open: false }" class="relative">
-      <button
-        @click="open = !open"
-        class="flex items-center gap-1 hover:text-pink-500"
-      >
-        EN
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
-        </svg>
-      </button>
-
-      <div
-        x-show="open"
-        @click.away="open = false"
-        x-transition
-        class="absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded shadow-lg z-50"
-      >
-        <a
-          href="https://www.instadl.org/es/"
-          class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-        >
-          Tanzania
-        </a>
-      </div>
-    </div>
-  </div>
-</nav>
-
-<!-- 🌟 Primary Navigation (squared-off) -->
-<nav aria-label="Primary Navigation" class="absolute top-[64px] left-0 right-0 z-40">
-  <ul class="mx-auto max-w-5xl
-             bg-white/20 backdrop-blur-md
-             shadow-lg rounded-md
-             flex flex-wrap justify-center gap-4
-             py-3 px-4
-             text-white text-sm font-medium">
-    <!-- Active Item -->
-    <li>
-      <a href="/"
-         class="px-3 py-1 rounded-full bg-white/20 text-yellow-300 font-semibold
-                hover:bg-white/30 transition">
-        Video
-      </a>
-    </li>
-    <!-- Inactive Items -->
-    <li>
-      <a href="/photo.html"
-         class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20
-                font-medium transition">
-        Photo
-      </a>
-    </li>
-    <li>
-      <a href="/reels.html"
-         class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20
-                font-medium transition">
-        Reels
-      </a>
-    </li>
-    <li>
-      <a href="/story.html"
-         class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20
-                font-medium transition">
-        Story
-      </a>
-    </li>
-    <li>
-      <a href="/igtv.html"
-         class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20
-                font-medium transition">
-        IGTV
-      </a>
-    </li>
-    <li>
-      <a href="/carousel.html"
-         class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20
-                font-medium transition">
-        Carousel
-      </a>
-    </li>
-  </ul>
-</nav>
-
-<!-- Hero Section -->
-<section id="top" class="bg-gradient-to-br from-[#f09433] via-[#e6683c] to-[#dc2743] pt-40 pb-20 px-6 text-white shadow-xl fade-in">
-  <div class="w-full max-w-2xl mx-auto text-center" x-data="{ loading: false, result: null, error: '' }">
-    <h1 class="text-5xl font-extrabold mb-4 leading-tight text-white drop-shadow-xl">
-  <span class="inline-block text-white">Bmb Instagram Downloader</span>
-  <span class="inline-block text-yellow-300 italic text-3xl">
-  </span>
-</h1>
-    <p class="text-lg mb-2 text-white/90">
-      <span class="block">Download <span class="text-yellow-200 font-semibold">Reels, Photos, and Videos</span> in HD</span>
-      <span class="block text-white/80 text-sm mt-1">No Watermarks. No Login Required.</span>
-    </p>
-    <p class="text-xs text-gray-100 mt-2">
-      ✅ No watermark &nbsp; • &nbsp; 🔒 Secure & ⚡️ Fast &nbsp; • &nbsp; 🗕 Updated Apr 2025
-    </p>
-
-    <!-- Corrected Input Form -->
-    <div class="mt-8 bg-white/20 backdrop-blur-md rounded-xl shadow-2xl border border-white/30 px-6 py-6">
-      <form class="flex flex-col sm:flex-row gap-4" @submit.prevent="
-        gtag('event', 'download_attempt', { event_category: 'Engagement', event_label: 'Download Form Submitted' });
-        loading = true;
-        fetch('/api/download', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: $refs.urlInput.value })
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.files && data.files.length > 0) {
-            result = data.files;
-            loading = false;
-            error = '';
-          } else {
-            error = 'No downloadable files found.';
-            loading = false;
-          }
-        })
-        .catch(() => {
-          error = 'Failed to fetch media.';
-          loading = false;
-        });">
-        <div class="flex flex-col sm:flex-row w-full gap-2">
-          <input type="text" placeholder="Insert Instagram link here" x-ref="urlInput" class="flex-grow p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm text-black bg-white placeholder-gray-500" />
-          <button type="button" class="bg-white text-gray-800 border border-gray-300 px-5 py-2 rounded-md text-sm font-semibold hover:bg-gray-100 transition-all duration-200 tracking-wide shadow-sm flex items-center justify-center" @click="navigator.clipboard.readText().then(text => $refs.urlInput.value = text)">
-            Paste
-          </button>
-        </div>
-        <button type="submit" class="bg-gradient-to-r from-pink-500 via-red-500 to-orange-500 text-white shadow-md hover:shadow-xl transition-all duration-300 py-3 px-6 rounded-lg w-full sm:w-auto font-semibold text-sm">
-          Download
-        </button>
-      </form>
-
-      <!-- Status -->
-      <div class="mt-4 text-sm text-white/90" x-show="loading">Grabbing download link...</div>
-      <template x-if="error">
-        <div class="mt-4 text-red-200 text-sm" x-text="error"></div>
-      </template>
-
-      <template x-if="result && result.length > 0">
-        <div class="mt-6 text-center slide-up space-y-6">
-          <template x-for="file in result" :key="file.url">
-            <div class="space-y-2">
-              <template x-if="file.thumbnail">
-                <img :src="file.thumbnail" alt="Instagram preview" class="rounded mb-2 w-full max-h-64 object-cover shadow-md" />
-              </template>
-              <template x-if="!file.thumbnail">
-                <div class="w-full h-64 flex items-center justify-center bg-gray-200 text-gray-600 border border-dashed border-gray-400 rounded">
-                  <span class="text-sm">No preview available</span>
-                </div>
-              </template>
-              <a :href="file.url" target="_blank" class="inline-block bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition" x-text="file.media_type === 'video' ? 'Download Video' : 'Download'"></a>
-            </div>
-          </template>
-        </div>
-      </template>
-      <p class="mt-8 text-xs text-center text-white/80">Only public Instagram photos are supported. Private or expired content won't work.</p>
-    </div>
-  </div>
-
-  <!-- 📢 New Inline Ad Block -->
-      <div class="my-6 w-full">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-2035725815108237"
-             data-ad-slot="auto"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-      </div>
-
-<!-- Google AdSense Inline Ad -->
-    <div class="my-6 w-full">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-2035725815108237"
-           data-ad-slot="auto"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
-    </div>
-   </section>
-
-<!-- 🛠 Updated How It Works Section -->
-<section class="py-24 px-6 text-center fade-in bg-white">
-  <div class="max-w-4xl mx-auto">
-    <h2 class="text-3xl font-bold mb-6 text-gray-800">How It Works</h2>
-    <div class="grid md:grid-cols-3 gap-10">
       
-      <!-- Step 1 -->
-      <div class="shadow-lg p-6 rounded-xl bg-gray-50 hover:shadow-xl transition">
-        <div class="mb-4">
-          <img loading="lazy" src="/copy-link-icon.png" alt="Copy link icon" class="w-12 h-12 mx-auto drop-shadow-md hover:scale-105 transition-transform duration-300" />
+      .notification-header {
+        gap: 10px;
+      }
+      
+      .notification-icon {
+        width: 40px;
+        height: 40px;
+      }
+      
+      .notification-icon i {
+        font-size: 24px;
+      }
+      
+      .notification-title h3 {
+        font-size: 1rem;
+      }
+      
+      .notification-title p {
+        font-size: 0.75rem;
+      }
+      
+      .notification-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Install Notification - Itaonekana baada ya sekunde 15 -->
+  <div id="installNotification" class="install-notification">
+    <div class="notification-content">
+      <button class="notification-close" id="closeNotification"><i class="bi bi-x-lg"></i></button>
+      
+      <div class="notification-header">
+        <div class="notification-icon">
+          <i class="bi bi-instagram"></i>
         </div>
-        <h3 class="text-xl font-bold">Paste the URL</h3>
-        <p class="text-sm text-gray-600 mt-2">Copy any Instagram post link and paste it into the input box above.</p>
+        <div class="notification-title">
+          <h3>📱 Install BMB App</h3>
+          <p>Get faster access & offline support</p>
+        </div>
       </div>
-
-      <!-- Step 2 -->
-      <div class="shadow-lg p-6 rounded-xl bg-gray-50 hover:shadow-xl transition">
-        <div class="mb-4">
-          <img loading="lazy" src="/server-icon.png" alt="Server fetch icon" class="w-12 h-12 mx-auto drop-shadow-md hover:scale-105 transition-transform duration-300" />
-        </div>
-        <h3 class="text-xl font-bold">We Fetch It</h3>
-        <p class="text-sm text-gray-600 mt-2">Our system instantly finds the content and prepares it in HD.</p>
+      
+      <div class="notification-body">
+        <i class="bi bi-emoji-smile" style="color: #98ff98; font-size: 24px; display: block; margin-bottom: 10px;"></i>
+        <strong style="color: #98ff98;">Welcome to BMB Instagram Downloader!</strong>
+        <p style="margin-top: 8px;">Install our app for better experience and faster downloads!</p>
       </div>
-
-      <!-- Step 3 -->
-      <div class="shadow-lg p-6 rounded-xl bg-gray-50 hover:shadow-xl transition">
-        <div class="mb-4">
-          <img loading="lazy" src="/favicon.ico" alt="Download icon" class="w-12 h-12 mx-auto drop-shadow-md hover:scale-105 transition-transform duration-300" />
-        </div>
-        <h3 class="text-xl font-bold">Download & Enjoy</h3>
-        <p class="text-sm text-gray-600 mt-2">Save your media without watermarks, ads, or quality loss.</p>
-      </div>
-
-    </div>
-  </div>
-</section>
-
- <!-- SEO-Optimized Section -->
-<section class="py-24 px-6 bg-gradient-to-b from-white to-gray-50 relative fade-in">
-  <div class="max-w-5xl mx-auto text-center relative z-10">
-    <h2 class="text-3xl sm:text-4xl font-extrabold mb-4 text-gray-800 tracking-tight">
-      Download Instagram Reels, Photos & Stories in HD
-    </h2>
-    <p class="text-lg text-gray-600 mb-12 leading-relaxed max-w-3xl mx-auto">
-      InstaDL lets you instantly grab Instagram content - Reels, photos, and Stories in full HD, watermark-free, no login required.
-    </p>
-
-    <div class="space-y-12">
-      <style>
-        .feature-bubble {
-          @apply bg-white rounded-3xl shadow-xl border border-gray-100 transition-all duration-300;
-          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
-        }
-        .feature-bubble:hover {
-          box-shadow: 0 18px 36px rgba(0, 0, 0, 0.1);
-        }
-      </style>
-
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="feature-bubble p-6 text-left">
-          <h3 class="text-xl font-semibold mb-2">🎥 HD Video & Reels</h3>
-          <p class="text-sm text-gray-700">
-            Download Instagram videos or Reels in crisp 1080p quality. Fast, simple, and without the watermark.
-          </p>
-        </div>
-        <div class="feature-bubble p-6 text-left">
-          <h3 class="text-xl font-semibold mb-2">📷 High-Res Photos</h3>
-          <p class="text-sm text-gray-700">
-            Download single images or every photo in a post at original resolution, no compression, no login.
-          </p>
-        </div>
-        <div class="feature-bubble p-6 text-left">
-          <h3 class="text-xl font-semibold mb-2">✨ Stories & More</h3>
-          <p class="text-sm text-gray-700">
-            Grab Stories before they disappear! Perfect for archiving content you love from any public profile.
-          </p>
-        </div>
+      
+      <div class="notification-actions">
+        <button class="install-btn" id="installButton">
+          <i class="bi bi-download"></i> Install App
+        </button>
+        <button class="cancel-btn" id="cancelButton">
+          <i class="bi bi-x-circle"></i> Later
+        </button>
       </div>
     </div>
   </div>
-</section>
 
-      <!-- Downloaders Section -->
-<section class="py-24 px-6 bg-gradient-to-b from-white to-gray-50 relative fade-in">
-  <div class="max-w-5xl mx-auto text-center">
-    
-    <!-- Video Downloader -->
-<div class="flex flex-col md:flex-row items-center gap-10 text-left feature-bubble p-6">
-  <div class="flex-1">
-    <h3 class="text-xl font-bold text-pink-600 mb-2">🎥 Video Downloader</h3>
-    <p class="text-gray-700 text-sm sm:text-base">
-      InstaDL supports Instagram video download for single video posts and multiple videos from carousels. Whether it's from your profile or a public account, download HD videos instantly and save them offline.
-    </p>
-  </div>
-  <div class="flex-shrink-0 w-full md:w-64">
-    <img
-      loading="lazy"
-      src="/img/videodownloader.png"
-      alt="Instagram video downloader preview"
-      class="w-full rounded-xl shadow-md"
-    >
-  </div>
-</div>
+  <nav>
+    <div class="nav-container">
+      <div class="logo" onclick="window.location.href='/'">
+        <img src="/public/bmb.png" alt="BMB Logo" onerror="this.src='https://via.placeholder.com/40/98ff98/000000?text=BMB'"/>
+        <span>BMB</span>
+      </div>
+      <div class="nav-links">
+        <a href="/docs">Docs</a>
+        <a href="/tools">Tools</a>
+        <a href="/upload">Uploader</a>
+        <a href="/other">Other</a>
+        <a href="/terms">Terms</a>
+        <a href="/privacy">Privacy</a>
+      </div>
+      <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <div>
+        <h3>Resources</h3>
+        <a href="/docs">Docs</a>
+        <a href="/tools">Tools</a>
+        <a href="/upload">Uploader</a>
+        <a href="/other">Other</a>
+      </div>
+      <div>
+        <h3>Legal</h3>
+        <a href="/terms">Terms</a>
+        <a href="/privacy">Privacy</a>
+      </div>
+    </div>
+  </nav>
 
-<!-- Photos Downloader -->
-<div class="flex flex-col md:flex-row-reverse items-center gap-10 text-left feature-bubble p-6">
-  <div class="flex-1">
-    <h3 class="text-xl font-bold text-pink-600 mb-2">📷 Photos Downloader</h3>
-    <p class="text-gray-700 text-sm sm:text-base">
-      Download high-quality photos from Instagram posts with just a link. InstaDL allows you to save single images or all images from carousel posts without login or compression.
-    </p>
-  </div>
-  <div class="flex-shrink-0 w-full md:w-64">
-    <img
-      loading="lazy"
-      src="/img/photosdownloader.png"
-      alt="Instagram photos downloader preview"
-      class="w-full rounded-xl shadow-md"
-    >
-  </div>
-</div>
+  <main>
+    <div class="main-content">
+      <div style="text-align:center;margin-bottom:1rem;">
+        <div class="title-row">
+          <div class="ig-icon">
+            <i class="bi bi-instagram"></i>
+          </div>
+          <div>
+            <div class="page-title">BMB Instagram Downloader</div>
+            <div class="subtitle">Download Instagram reels, photos & videos in HD quality</div>
+          </div>
+        </div>
+      </div>
 
-<!-- Reels Downloader -->
-<div class="flex flex-col md:flex-row items-center gap-10 text-left feature-bubble p-6">
-  <div class="flex-1">
-    <h3 class="text-xl font-bold text-pink-600 mb-2">🎞️ Reels Downloader</h3>
-    <p class="text-gray-700 text-sm sm:text-base">
-      Instagram Reels are short-form videos that deserve to be saved. With InstaDL, you can download Reels in HD, watch offline, and keep your favorite content forever — all without watermarks.
-    </p>
-  </div>
-  <div class="flex-shrink-0 w-full md:w-64">
-    <img
-      loading="lazy"
-      src="/img/reelsdownloader.png"
-      alt="Instagram reels downloader preview"
-      class="w-full rounded-xl shadow-md"
-    >
-  </div>
-</div>
+      <div class="card" id="inputCard">
+        <div style="text-align:center;margin-bottom:1rem;">
+          <strong style="color:#98ff98">How it works</strong>
+          <div class="info">
+            Paste an Instagram link and click Download. Get reels, photos, and videos in high quality.
+          </div>
+        </div>
 
-<!-- Story Downloader -->
-<div class="flex flex-col md:flex-row-reverse items-center gap-10 text-left feature-bubble p-6">
-  <div class="flex-1">
-    <h3 class="text-xl font-bold text-pink-600 mb-2">✨ Story Downloader</h3>
-    <p class="text-gray-700 text-sm sm:text-base">
-      Grab and save Instagram Stories in HD instantly — perfect for archiving ephemeral content from any public profile.
-    </p>
-  </div>
-  <div class="flex-shrink-0 w-full md:w-64">
-    <img
-      loading="lazy"
-      src="/img/storydownloader.png"
-      alt="Instagram story downloader preview"
-      class="w-full rounded-xl shadow-md"
-    >
-  </div>
-</div>
+        <div class="input-row" style="margin-top:0.5rem;">
+          <input id="igUrl" class="text-input" type="text" placeholder="Paste Instagram URL here (https://www.instagram.com/p/... or https://www.instagram.com/reel/...)" aria-label="Instagram URL"/>
+          <button id="fetchBtn" class="btn"><i class="bi bi-download"></i> Download</button>
+        </div>
+      </div>
 
-<!-- IGTV Downloader -->
-<div class="flex flex-col md:flex-row items-center gap-10 text-left feature-bubble p-6">
-  <div class="flex-1">
-    <h3 class="text-xl font-bold text-pink-600 mb-2">📺 IGTV Downloader</h3>
-    <p class="text-gray-700 text-sm sm:text-base">
-      IGTV is designed for longer video content. If you can't watch it now, download it with InstaDL and enjoy it later — even offline.
-    </p>
-  </div>
-  <div class="flex-shrink-0 w-full md:w-64">
-    <img
-      loading="lazy"
-      src="/img/igtvdownloader.png"
-      alt="Instagram IGTV downloader preview"
-      class="w-full rounded-xl shadow-md"
-    >
-  </div>
-</div>
+      <div id="resultArea" class="result-area card">
+        <div class="post-header">
+          <div class="post-title" id="postTitle"></div>
+          <div class="post-meta">
+            <span id="postUsername"></span> ·
+            <a href="#" id="postSource" target="_blank" rel="noopener">Open in Instagram</a>
+          </div>
+          <div class="stats-row">
+            <div class="stat-item"><i class="bi bi-heart-fill"></i><span id="likeCount"></span></div>
+            <div class="stat-item"><i class="bi bi-chat-fill"></i><span id="commentCount"></span></div>
+          </div>
+          <div class="time-info" id="takenAt"></div>
+        </div>
 
-<!-- Carousel Downloader -->
-<div class="flex flex-col md:flex-row-reverse items-center gap-10 text-left feature-bubble p-6">
-  <div class="flex-1">
-    <h3 class="text-xl font-bold text-pink-600 mb-2">🖼️ Carousel / Album Downloader</h3>
-    <p class="text-gray-700 text-sm sm:text-base">
-      Carousel posts (also called albums) contain multiple photos and videos. InstaDL enables you to download the entire set in one click — ideal for preserving galleries or memes.
-    </p>
+        <div class="content-section">
+          <div class="type-badge" id="typeBadge">POST</div>
+          <div class="description" id="description"></div>
+
+          <div class="gallery-section" id="gallerySection" style="display:none;">
+            <div class="gallery-title">
+              <i class="bi bi-images"></i> Media Gallery
+            </div>
+            <div class="image-gallery" id="imageGallery"></div>
+          </div>
+        </div>
+
+        <div class="download-section">
+          <div class="download-title"><i class="bi bi-download"></i> Download Options</div>
+          <div class="download-grid" id="downloadGrid"></div>
+        </div>
+
+        <div class="comments-section" id="commentsSection" style="display:none;">
+          <h3>Top Comments</h3>
+          <div id="commentsList"></div>
+        </div>
+
+        <div class="actions">
+          <button id="resetBtn" class="btn btn-secondary"><i class="bi bi-arrow-clockwise"></i> Download Another</button>
+        </div>
+      </div>
+
+      <div class="faq">
+        <h3>Usage</h3>
+        <p>Paste the Instagram URL into the input field, then click Download. The tool will fetch the post and display all media and download options.</p>
+
+        <h3 style="margin-top:1rem">FAQ</h3>
+        <strong>Q: Can I download all photos from a carousel?</strong>
+        <p>A: Yes. All photos will be shown in a gallery with separate download buttons.</p>
+
+        <strong>Q: Can I download reels?</strong>
+        <p>A: Yes. For reels or videos, the MP4 download option will be available.</p>
+
+        <strong>Q: Is this free to use?</strong>
+        <p>A: Yes. This tool is free to use.</p>
+
+        <strong>Q: Legal considerations?</strong>
+        <p>A: Make sure you have the right to download and use any content. This tool is for personal use only; respect copyrights and Instagram's terms of service.</p>
+      </div>
+    </div>
+  </main>
+
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">
+      <div style="font-weight:bold;margin-bottom:.5rem;">Processing your request...</div>
+      <div style="font-size:.9rem;opacity:.8;">Fetching Instagram content</div>
+    </div>
   </div>
-  <div class="flex-shrink-0 w-full md:w-64">
-    <img
-      loading="lazy"
-      src="/img/carouseldownloader.png"
-      alt="Instagram carousel downloader preview"
-      class="w-full rounded-xl shadow-md"
-    >
-  </div>
-</div>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-info">
+        <div class="logo">
+          <img src="/public/bmb.png" alt="BMB Logo" onerror="this.src='https://via.placeholder.com/40/98ff98/000000?text=BMB'"/>
+          <span>BMB</span>
+        </div>
+        <p>Empowering users with reliable Instagram downloader.</p>
+        <div class="social-links">
+          <h3>Connect With Us</h3>
+          <div class="social-icons">
+            <a href="https://instagram.com/bmb" class="social-link"><i class="bi bi-instagram"></i></a>
+            <a href="https://tiktok.com/@bmb" class="social-link"><i class="bi bi-tiktok"></i></a>
+            <a href="https://twitter.com/bmb" class="social-link"><i class="bi bi-twitter"></i></a>
+            <a href="https://t.me/bmb" class="social-link"><i class="bi bi-telegram"></i></a>
+            <a href="https://whatsapp.com/channel/bmb" class="social-link"><i class="bi bi-whatsapp"></i></a>
+            <a href="https://discord.gg/bmb" class="social-link"><i class="bi bi-discord"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h3>Resources</h3>
+        <a href="/docs">Documentation</a>
+        <a href="/tools">Tools</a>
+        <a href="/upload">Uploader</a>
+        <a href="/other">Other</a>
+      </div>
+      <div class="footer-links">
+        <h3>Legal</h3>
+        <a href="/terms">Terms of Service</a>
+        <a href="/privacy">Privacy Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© <span id="current-year"></span> BMB. All rights reserved.</div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="/lib/api/api.js"></script>
+  <script src="/script.js"></script>
+  <script src="/src/main.ts"></script>
+  <script src="/src/components/App.ts"></script>
   
-  <!-- Divider -->
-  <div class="w-full h-4 bg-gradient-to-r from-pink-300 via-yellow-300 to-orange-400"></div>
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/public/service-worker.js')
+          .then(registration => {
+            console.log('ServiceWorker registered:', registration);
+          })
+          .catch(error => {
+            console.log('ServiceWorker registration failed:', error);
+          });
+      });
+    }
+  </script>
 
-  <!-- 📢 Value-Rich Trust Section (For Google AdSense & SEO) -->
-<section class="py-20 px-6 bg-white text-gray-800 fade-in">
-  <div class="max-w-3xl mx-auto text-center">
-    <h2 class="text-3xl font-bold mb-4">Why People Trust InstaDL</h2>
-    <p class="text-base text-gray-600 leading-relaxed mb-8">
-      InstaDL stands out by focusing on what truly matters — fast, secure, and high-quality downloads with no strings attached. Unlike other sites cluttered with pop-ups, fake buttons, or forced app installs, we offer a clean, simple experience that works on every device — phone, tablet, or desktop.
-      <br><br>
-      Whether you're a content creator saving clips, a marketer grabbing reference reels, or just a casual Instagram user who wants to archive great content, InstaDL makes it instant. We don’t watermark, limit quality, or require logins. Just paste a link and download what you need — that’s it.
-      <br><br>
-      Trusted by thousands worldwide, InstaDL has quickly become a go-to tool for anyone who wants to save Instagram videos, photos, stories, and carousels. If you’re tired of slow sites and broken tools, give us a try and see the difference.
-    </p>
-    <a href="#top" class="inline-block bg-gradient-to-r from-pink-500 via-red-500 to-orange-500 text-white px-6 py-3 rounded-lg text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
-      Paste a link above and get started →
-    </a>
-  </div>
-</section>
-  
-<!-- Features Section -->
-<section class="py-24 px-6 bg-gray-50 fade-in">
-  <div class="max-w-5xl mx-auto text-center">
-    <h2 class="text-3xl sm:text-4xl font-bold mb-8 text-gray-800 tracking-tight">Why use instadl.org?</h2>
-    <div class="grid md:grid-cols-2 gap-12 items-center">
-      <!-- Benefit List -->
-      <ul class="space-y-5 text-left text-gray-700 text-base sm:text-lg leading-relaxed">
-        <li class="flex items-start gap-3">
-          <span class="text-green-500 text-xl">✔️</span>
-          <span>Download Reels, videos, photos, and carousels — all in high quality</span>
-        </li>
-        <li class="flex items-start gap-3">
-          <span class="text-green-500 text-xl">✔️</span>
-          <span>No login, no app — just paste the link and go</span>
-        </li>
-        <li class="flex items-start gap-3">
-          <span class="text-green-500 text-xl">✔️</span>
-          <span>Works perfectly on mobile, tablet, and desktop browsers</span>
-        </li>
-        <li class="flex items-start gap-3">
-          <span class="text-green-500 text-xl">✔️</span>
-          <span>No pop-ups or spam — just clean, ad-free downloading</span>
-        </li>
-        <li class="flex items-start gap-3">
-          <span class="text-green-500 text-xl">✔️</span>
-          <span>Every download is watermark-free and full resolution</span>
-        </li>
-      </ul>
-
-      <!-- Image -->
-      <img loading="lazy" src="https://techcrunch.com/wp-content/uploads/2023/03/alexander-shatov-71Qk8ODIBko-unsplash.jpg?w=1024" 
-           class="rounded-xl shadow-xl w-full" 
-           alt="Instagram graphic">
-    </div>
-  </div>
-</section>
-
-  <!-- CTA Section -->
-  <section class="py-24 px-6 bg-white fade-in">
-    <div class="max-w-3xl mx-auto text-center">
-      <h2 class="text-3xl font-bold mb-4 text-gray-800">Ready to Download?</h2>
-      <p class="text-gray-600 mb-6">Paste your Instagram URL above and hit download. It’s that easy.</p>
-      <img loading="lazy" src="https://parade.com/.image/c_limit%2Ccs_srgb%2Cq_auto:good%2Cw_1254/MTkwNTgxMTkzOTgyMjI0MjUy/how-to-use-instagram-jpg.webp" class="rounded-lg mx-auto w-full max-w-lg shadow-lg" alt="Phone using Instagram">
-    </div>
-  </section>
-
-  <!-- Helpful Guides (Silent Sniper Links) -->
-<section class="py-10 text-center text-xs text-gray-400">
-  <div class="flex flex-wrap justify-center gap-4">
-    <a href="/download-story-no-login.html" class="hover:text-pink-400">Download Story no login</a>
-  </div>
-</section>
-
-<!-- Footer -->
-<footer class="bg-gray-900 text-gray-400 text-sm py-10 px-6">
-  <div class="max-w-5xl mx-auto text-center space-y-4">
-    <div class="flex flex-wrap justify-center gap-4">
-      <a href="/it.html" class="hover:text-white">Download Instagram Video</a>
-      <a href="/photo.html" class="hover:text-white">Instagram Photo Downloader</a>
-      <a href="/reels.html" class="hover:text-white">Instagram Reels Downloader</a>
-      <a href="/story.html" class="hover:text-white">Instagram Story Downloader</a>
-      <a href="/igtv.html" class="hover:text-white">Download Instagram Video & IGTV</a>
-      <a href="/carousel.html" class="hover:text-white">Instagram Carousel Downloader</a>
-      <a href="/privacy.html" class="hover:text-white">Privacy Policy</a>
-      <span>Tiktok Video Downloader (coming soon)</span>
-      <!-- Discreet backlink page -->
-      <a
-        href="/download-story-no-login.html"
-        class="order-last text-xs text-gray-600 hover:text-gray-500 opacity-50 transition-opacity duration-200"
-        title="Download Story Without Login (less prominent)">
-        Download Story Without Login
-      </a>
-    </div>
-    <div class="mt-4">© 2025 InstaDL. All rights reserved.</div>
-  </div>
-</footer>
+  <!-- Ad Scripts -->
+  <script src="https://3nbf4.com/act/files/tag.min.js?z=10290661" data-cfasync="false" async></script>
+  <script>(function(s){s.dataset.zone='10290665',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+  <script>(function(s){s.dataset.zone='10290667',s.src='https://groleegni.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+  <script>(function(s){s.dataset.zone='10290673',s.src='https://gizokraijaw.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 </body>
-</html>
 </html>
