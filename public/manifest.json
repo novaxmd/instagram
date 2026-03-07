@@ -1,0 +1,29 @@
+{
+  "name": "BMB Instagram Downloader",
+  "short_name": "BMB Downloader",
+  "description": "Download Instagram reels, photos & videos in HD quality",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#98ff98",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/public/bmb.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/public/bmb.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "social"],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false
+}
