@@ -188,18 +188,15 @@ function formatDateFromUnix(timestamp) {
   });
 }
 
-// ==================== DOWNLOAD FUNCTION - KAMA SERVER.JS (Download Manager) ====================
-window.downloadFile = function(url, filename) {
+// ==================== DOWNLOAD FUNCTION - KWA VIDEO (Inafanya Kazi) ====================
+window.downloadFromVideo = function(url, filename) {
   try {
-    console.log('Downloading:', url);
-    console.log('Filename:', filename);
+    console.log('Downloading from video:', url);
     
-    // Create download URL through our proxy (kama server.js inavyofanya)
     const proxyUrl = `/api/proxy-download?url=${encodeURIComponent(url)}&originalUrl=${encodeURIComponent(window.currentInstagramUrl || '')}`;
     
-    // METHOD: Direct link - Hii inaamsha download manager ya Chrome
     const link = document.createElement('a');
-    link.href = proxyUrl; // Tumia proxy kama server.js
+    link.href = proxyUrl;
     link.download = filename;
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
@@ -208,18 +205,22 @@ window.downloadFile = function(url, filename) {
     document.body.appendChild(link);
     link.click();
     
-    // Clean up
     setTimeout(() => {
       document.body.removeChild(link);
     }, 1000);
     
-    // Show toast - lakini download manager itaonyesha yake pia
-    showToast('Download started via Download Manager', 'success');
+    showToast('Download started!', 'success');
     
   } catch (err) {
-    console.error('Download error:', err);
+    console.error('Video download error:', err);
     showToast('Download failed. Try again.', 'error');
   }
+}
+
+// ==================== DOWNLOAD FUNCTION - KWA BUTTON (Imerekebishwa) ====================
+window.downloadFromButton = function(url, filename) {
+  // Tumia function ile ile inayofanya kazi kwenye video
+  window.downloadFromVideo(url, filename);
 }
 
 // Helper function for toast messages
@@ -304,7 +305,7 @@ window.fetchContent = async function() {
       // Auto download if setting is enabled
       if (settings.autoDownload && mainMedia) {
         setTimeout(() => {
-          downloadFile(mainMedia.url, `instagram-video-${Date.now()}.mp4`);
+          window.downloadFromButton(mainMedia.url, `instagram-video-${Date.now()}.mp4`);
         }, 500);
       }
     } else {
@@ -338,7 +339,7 @@ function showResult(data) {
             const itemIsVideo = item.type === 'video' || item.ext === 'mp4';
             return `
               <div style="position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; background: #222; cursor: pointer;" 
-                   onclick="downloadFile('${item.url}', 'instagram-${index+1}.${item.ext}')">
+                   onclick="downloadFromVideo('${item.url}', 'instagram-${index+1}.${item.ext}')">
                 <img src="${item.thumb || item.url}" style="width: 100%; height: 100%; object-fit: cover;">
                 ${itemIsVideo ? '<i class="bi bi-play-circle-fill" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px; text-shadow: 0 2px 5px rgba(0,0,0,0.5);"></i>' : ''}
                 <div style="position: absolute; bottom: 4px; right: 4px; background: var(--accent); border-radius: 4px; padding: 4px;">
@@ -364,7 +365,7 @@ function showResult(data) {
           ${downloadUrls.map((item, index) => {
             const itemIsVideo = item.type === 'video' || item.ext === 'mp4';
             return `
-              <button class="btn btn-secondary" style="width: 100%;" onclick="downloadFile('${item.url}', 'instagram-${index+1}.${item.ext}')">
+              <button class="btn btn-secondary" style="width: 100%;" onclick="downloadFromButton('${item.url}', 'instagram-${index+1}.${item.ext}')">
                 <i class="bi ${itemIsVideo ? 'bi-play-circle' : 'bi-image'}"></i>
                 Download ${itemIsVideo ? 'Video' : 'Photo'} ${downloadUrls.length > 1 ? `#${index+1}` : ''}
               </button>
@@ -404,11 +405,14 @@ function showResult(data) {
         </div>
       </div>
       
-      <div class="preview-media">
+      <div class="preview-media" onclick="downloadFromVideo('${data.downloadUrl}', 'instagram-video-${Date.now()}.${mainExt}')" style="cursor: pointer;">
         ${isVideo 
-          ? `<video src="${data.downloadUrl}" controls class="preview-image" poster="${data.thumbnail}" style="max-height: 400px; width: 100%;"></video>`
+          ? `<video src="${data.downloadUrl}" controls class="preview-image" poster="${data.thumbnail}" style="max-height: 400px; width: 100%;" onclick="event.stopPropagation()"></video>`
           : `<img src="${data.downloadUrl || data.thumbnail}" alt="Preview" class="preview-image" style="max-height: 400px;">`
         }
+        <div style="text-align: center; margin-top: 8px; color: var(--accent); font-size: 12px;">
+          <i class="bi bi-download"></i> Tap video to download
+        </div>
       </div>
       
       ${apiBadge}
@@ -416,7 +420,7 @@ function showResult(data) {
       ${downloadOptionsHtml}
       
       <div class="preview-actions">
-        <button class="btn" onclick="downloadFile('${data.downloadUrl}', 'instagram-video-${Date.now()}.${mainExt}')">
+        <button class="btn" onclick="downloadFromButton('${data.downloadUrl}', 'instagram-video-${Date.now()}.${mainExt}')">
           <i class="bi bi-download"></i> Download HD
         </button>
         <button class="btn btn-secondary" onclick="resetDownload()">
