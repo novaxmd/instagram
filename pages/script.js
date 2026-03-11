@@ -50,7 +50,7 @@ function loadPage(page) {
   }
 }
 
-// ==================== HOME PAGE (Kama Picha ya Kwanza) ====================
+// ==================== HOME PAGE ====================
 function renderHomePage() {
   const html = `
     <div class="hero-section">
@@ -125,7 +125,7 @@ function renderHomePage() {
   mainContent.innerHTML = html;
 }
 
-// ==================== DOWNLOAD PAGE (Kama Picha ya Pili) ====================
+// ==================== DOWNLOAD PAGE ====================
 function renderDownloadPage() {
   const html = `
     <div class="page-header">
@@ -163,7 +163,51 @@ function renderDownloadPage() {
   }
 }
 
-// Fetch content function
+// Format number (K, M)
+function formatNumber(num) {
+  if (!num && num !== 0) return '0';
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+  return num.toString();
+}
+
+// Format date
+function formatDateFromUnix(timestamp) {
+  if (!timestamp) return '';
+  const date = new Date(timestamp * 1000);
+  return 'Posted on ' + date.toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+}
+
+// Download file function
+window.downloadFile = async function(url, filename) {
+  try {
+    document.getElementById('loadingState').classList.remove('hidden');
+    
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(blobUrl);
+    
+    alert('Download started!');
+  } catch (err) {
+    alert('Download failed. Opening in new tab...');
+    window.open(url, '_blank');
+  } finally {
+    document.getElementById('loadingState').classList.add('hidden');
+  }
+}
+
+// Fetch content function - IMEBORESHA KABISA
 window.fetchContent = async function() {
   const url = document.getElementById('instagramUrl').value.trim();
   
@@ -177,32 +221,113 @@ window.fetchContent = async function() {
   document.getElementById('resultArea').classList.add('hidden');
 
   try {
-    // Call our API
-    const response = await fetch('/api/api.js?url=' + encodeURIComponent(url));
+    // Call API - inatumia API ile ile kama kwenye code yako
+    const response = await fetch(`/api/api.js?url=${encodeURIComponent(url)}`);
     const data = await response.json();
     
     if (data.success) {
-      showResult(data.data, url);
+      // Process the data
+      const mediaData = data.data;
+      const downloadUrls = mediaData.downloadUrls || [];
+      
+      // Check if it's video
+      const isVideo = url.includes('/reel/') || 
+                     (downloadUrls.length > 0 && downloadUrls[0].type === 'video');
+      
+      // Get first media URL
+      const mainMedia = downloadUrls.length > 0 ? downloadUrls[0] : null;
+      
+      // Prepare data for display
+      const displayData = {
+        title: mediaData.title || 'Instagram Post',
+        username: mediaData.username || 'unknown',
+        like_count: mediaData.like_count || 0,
+        comment_count: mediaData.comment_count || 0,
+        taken_at: mediaData.taken_at || Math.floor(Date.now() / 1000),
+        downloadUrl: mainMedia ? mainMedia.url : '',
+        thumbnail: mainMedia ? mainMedia.thumb : '',
+        downloadUrls: downloadUrls,
+        isVideo: isVideo,
+        source: url
+      };
+      
+      showResult(displayData);
       
       // Add to history
       addToHistory({
         url: url,
         date: new Date().toISOString(),
-        type: url.includes('/reel/') ? 'Reel' : 'Post',
-        title: data.data.title
+        type: isVideo ? 'Reel' : 'Post',
+        title: displayData.title,
+        username: displayData.username
       });
     } else {
       throw new Error(data.error || 'Failed to fetch');
     }
   } catch (error) {
     alert('Error: ' + error.message);
+    console.error('Fetch error:', error);
   } finally {
     document.getElementById('loadingState').classList.add('hidden');
   }
 }
 
-function showResult(data, url) {
+// Show result function
+function showResult(data) {
   const resultArea = document.getElementById('resultArea');
+  const isVideo = data.isVideo;
+  const downloadUrls = data.downloadUrls || [];
+  const isMultipleMedia = downloadUrls.length > 1;
+  
+  // Build gallery HTML if multiple media
+  let galleryHtml = '';
+  if (isMultipleMedia) {
+    galleryHtml = `
+      <div style="margin-top: 20px; padding: 0 16px 16px;">
+        <h4 style="color: var(--accent); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          <i class="bi bi-images"></i> Media Gallery (${downloadUrls.length})
+        </h4>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+          ${downloadUrls.map((item, index) => {
+            const isItemVideo = item.type === 'video';
+            return `
+              <div style="position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; background: #222;">
+                <img src="${item.thumb || item.url}" style="width: 100%; height: 100%; object-fit: cover;">
+                ${isItemVideo ? '<i class="bi bi-play-circle-fill" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px;"></i>' : ''}
+                <button onclick="downloadFile('${item.url}', 'instagram-${index+1}.${item.ext}')" 
+                        style="position: absolute; bottom: 4px; right: 4px; background: var(--accent); border: none; border-radius: 4px; padding: 6px; cursor: pointer;">
+                  <i class="bi bi-download" style="color: black; font-size: 14px;"></i>
+                </button>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+  
+  // Build download options
+  let downloadOptionsHtml = '';
+  if (downloadUrls.length > 0) {
+    downloadOptionsHtml = `
+      <div style="padding: 16px; border-top: 1px solid var(--border);">
+        <h4 style="color: var(--accent); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          <i class="bi bi-download"></i> Download Options
+        </h4>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          ${downloadUrls.map((item, index) => {
+            const itemIsVideo = item.type === 'video';
+            return `
+              <button class="btn btn-secondary" style="width: 100%;" onclick="downloadFile('${item.url}', 'instagram-${index+1}.${item.ext}')">
+                <i class="bi ${itemIsVideo ? 'bi-play-circle' : 'bi-image'}"></i>
+                Download ${itemIsVideo ? 'Video' : 'Photo'} ${downloadUrls.length > 1 ? `#${index+1}` : ''}
+              </button>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
   
   resultArea.innerHTML = `
     <div class="preview-card">
@@ -211,18 +336,30 @@ function showResult(data, url) {
           <i class="bi bi-person-circle"></i>
         </div>
         <div class="preview-info">
-          <h4>@${data.username || 'instagram_user'}</h4>
-          <p>${url}</p>
+          <h4>@${data.username}</h4>
+          <p style="font-size: 11px; word-break: break-all;">${data.source.substring(0, 60)}...</p>
+          <div style="display: flex; gap: 16px; margin-top: 8px;">
+            <span><i class="bi bi-heart-fill" style="color: #ff3040;"></i> ${formatNumber(data.like_count)}</span>
+            <span><i class="bi bi-chat-fill" style="color: var(--accent);"></i> ${formatNumber(data.comment_count)}</span>
+          </div>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">
+            ${formatDateFromUnix(data.taken_at)}
+          </div>
         </div>
       </div>
+      
       <div class="preview-media">
-        ${data.mediaType === 'video' 
-          ? `<video src="${data.downloadUrl}" controls class="preview-image"></video>`
-          : `<img src="${data.thumbnail || data.downloadUrl}" alt="Preview" class="preview-image">`
+        ${isVideo 
+          ? `<video src="${data.downloadUrl}" controls class="preview-image" poster="${data.thumbnail}" style="max-height: 400px;"></video>`
+          : `<img src="${data.downloadUrl || data.thumbnail}" alt="Preview" class="preview-image" style="max-height: 400px;">`
         }
       </div>
+      
+      ${isMultipleMedia ? galleryHtml : ''}
+      ${downloadOptionsHtml}
+      
       <div class="preview-actions">
-        <button class="btn" onclick="downloadContent('${data.downloadUrl}', '${data.filename}')">
+        <button class="btn" onclick="downloadFile('${data.downloadUrl}', 'instagram-media.${isVideo ? 'mp4' : 'jpg'}')">
           <i class="bi bi-download"></i> Download HD
         </button>
         <button class="btn btn-secondary" onclick="resetDownload()">
@@ -235,21 +372,12 @@ function showResult(data, url) {
   resultArea.classList.remove('hidden');
 }
 
-window.downloadContent = function(url, filename) {
-  // In real app, this would trigger download
-  alert(`Downloading: ${filename}\n(In real app, this would download the file)`);
-  
-  if (settings.autoDownload) {
-    // Auto download logic here
-  }
-}
-
 window.resetDownload = function() {
   document.getElementById('instagramUrl').value = 'https://www.instagram.com/reel/xxxx/';
   document.getElementById('resultArea').classList.add('hidden');
 }
 
-// ==================== HISTORY PAGE (Kama Picha ya Tatu) ====================
+// ==================== HISTORY PAGE ====================
 function renderHistoryPage() {
   let historyHtml = '';
   
@@ -276,10 +404,11 @@ function renderHistoryPage() {
               <i class="bi ${item.type === 'Reel' ? 'bi-camera-reels' : 'bi-file-image'}"></i>
             </div>
             <div class="history-details">
-              <div class="history-url">${item.title || item.url}</div>
+              <div class="history-url">${item.title || item.url.substring(0, 50)}...</div>
               <div class="history-meta">
                 <span>${item.type}</span>
                 <span>${new Date(item.date).toLocaleDateString()}</span>
+                <span>@${item.username || 'user'}</span>
               </div>
             </div>
             <button class="btn btn-small" onclick="reDownload('${item.url}')">
@@ -316,7 +445,7 @@ function addToHistory(item) {
   localStorage.setItem('downloadHistory', JSON.stringify(downloadHistory));
 }
 
-// ==================== SETTINGS PAGE (Kama Picha ya Nne) ====================
+// ==================== SETTINGS PAGE ====================
 function renderSettingsPage() {
   const html = `
     <div class="page-header">
