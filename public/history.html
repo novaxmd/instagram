@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IG Downloader - History</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Navigation Bar -->
+    <nav class="bottom-nav">
+      <a href="/" class="nav-item">
+        <i class="bi bi-house-door-fill"></i>
+        <span>Home</span>
+      </a>
+      <a href="/download" class="nav-item">
+        <i class="bi bi-download"></i>
+        <span>Download</span>
+      </a>
+      <a href="/history" class="nav-item active">
+        <i class="bi bi-clock-history"></i>
+        <span>History</span>
+      </a>
+      <a href="/settings" class="nav-item">
+        <i class="bi bi-gear-fill"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="page-header">
+        <h2 class="page-title">Download History</h2>
+      </div>
+
+      <div class="history-container" id="historyContainer">
+        <!-- History will be populated by JavaScript -->
+      </div>
+
+      <div class="empty-state" id="emptyState">
+        <i class="bi bi-clock-history empty-icon"></i>
+        <h3>No History Yet</h3>
+        <p>Your downloaded content will appear here</p>
+        <button class="btn btn-primary" onclick="window.location.href='/download'">
+          <i class="bi bi-download"></i> Download Now
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function loadHistory() {
+      const historyContainer = document.getElementById('historyContainer');
+      const emptyState = document.getElementById('emptyState');
+      
+      // Get history from localStorage
+      const history = JSON.parse(localStorage.getItem('downloadHistory') || '[]');
+      
+      if (history.length === 0) {
+        // Show empty state
+        historyContainer.style.display = 'none';
+        emptyState.style.display = 'flex';
+      } else {
+        // Show history
+        historyContainer.style.display = 'block';
+        emptyState.style.display = 'none';
+        
+        historyContainer.innerHTML = history.map((item, index) => {
+          const date = new Date(item.date).toLocaleString();
+          return `
+            <div class="history-item">
+              <div class="history-icon">
+                <i class="bi ${item.type === 'Reel' ? 'bi-camera-reels' : 'bi-file-image'}"></i>
+              </div>
+              <div class="history-details">
+                <div class="history-url">${item.url}</div>
+                <div class="history-meta">
+                  <span class="history-type">${item.type}</span>
+                  <span class="history-date">${date}</span>
+                </div>
+              </div>
+              <button class="btn btn-icon" onclick="reDownload('${item.url}')">
+                <i class="bi bi-download"></i>
+              </button>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function reDownload(url) {
+      localStorage.setItem('pendingDownload', url);
+      window.location.href = '/download';
+    }
+
+    function clearHistory() {
+      if (confirm('Are you sure you want to clear all history?')) {
+        localStorage.removeItem('downloadHistory');
+        loadHistory();
+      }
+    }
+
+    // Load history on page load
+    loadHistory();
+
+    // Set active nav
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.nav-item').forEach(item => {
+      if (item.getAttribute('href') === currentPath) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>
