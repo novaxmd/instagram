@@ -182,96 +182,44 @@ function formatDateFromUnix(timestamp) {
   });
 }
 
-// ==================== DOWNLOAD FUNCTION - IMEBORESHA KWA SIMU ====================
+// ==================== DOWNLOAD FUNCTION - KAMA SERVER.JS ====================
 window.downloadFile = async function(url, filename) {
   try {
     // Show loading
     const loadingEl = document.getElementById('loadingState');
     if (loadingEl) loadingEl.classList.remove('hidden');
     
-    console.log('Downloading:', url, 'as:', filename);
+    console.log('Downloading:', url);
+    console.log('Filename:', filename);
     
-    // Check if it's a video file
-    const isVideo = filename.endsWith('.mp4') || filename.endsWith('.mov') || filename.endsWith('.avi') || url.includes('.mp4');
+    // Create download URL through our proxy (kama server.js)
+    const proxyUrl = `/api/proxy-download?url=${encodeURIComponent(url)}&originalUrl=${encodeURIComponent(window.currentInstagramUrl || '')}`;
     
-    // Detect if mobile device
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // METHOD 1: Direct proxy download (kama server.js inavyofanya)
+    const link = document.createElement('a');
+    link.href = proxyUrl;
+    link.download = filename;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.style.display = 'none';
     
-    // SOLUTION 1: Direct link approach - BEST FOR MOBILE
-    if (isMobile) {
-      // Create invisible anchor
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename; // This works on many mobile browsers
-      link.target = '_blank'; // Fallback for iOS
-      link.rel = 'noopener noreferrer';
-      
-      // Make it work on all mobile devices
-      document.body.appendChild(link);
-      
-      // Trigger click
-      link.click();
-      
-      // For iOS, also try opening in new tab
-      if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        setTimeout(() => {
-          window.open(url, '_blank');
-        }, 300);
-      }
-      
-      // Clean up
-      setTimeout(() => {
-        document.body.removeChild(link);
-      }, 1000);
-      
-      // Show success message
-      showToast('Download started! Check your downloads folder.', 'success');
-    } 
-    // SOLUTION 2: Blob method for desktop
-    else {
-      try {
-        const response = await fetch(url, {
-          mode: 'cors',
-          headers: {
-            'Accept': 'video/mp4, video/*, image/*'
-          }
-        });
-        
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        const blob = await response.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        
-        // Clean up
-        setTimeout(() => {
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(blobUrl);
-        }, 100);
-        
-        showToast('Download started!', 'success');
-      } catch (blobError) {
-        console.error('Blob download failed, trying direct link:', blobError);
-        // Fallback to direct link
-        window.open(url, '_blank');
-        showToast('Opening in new tab...', 'info');
-      }
-    }
+    document.body.appendChild(link);
+    link.click();
+    
+    // Clean up
+    setTimeout(() => {
+      document.body.removeChild(link);
+      if (loadingEl) loadingEl.classList.add('hidden');
+    }, 2000);
+    
+    // Show success message
+    showToast('Download started! Check your downloads folder.', 'success');
     
   } catch (err) {
     console.error('Download error:', err);
     
-    // Final fallback
-    showToast('Download failed. Opening in new tab...', 'warning');
-    window.open(url, '_blank');
-    
-  } finally {
-    // Hide loading
-    const loadingEl = document.getElementById('loadingState');
+    // Fallback
+    showToast('Download failed. Try again.', 'error');
     if (loadingEl) loadingEl.classList.add('hidden');
   }
 }
@@ -306,11 +254,14 @@ window.fetchContent = async function() {
   document.getElementById('resultArea').classList.add('hidden');
 
   try {
-    // Call API
+    // Call API (sasa ina API mbili)
     const response = await fetch(`/api/api.js?url=${encodeURIComponent(url)}`);
     const data = await response.json();
     
     if (data.success) {
+      // Save current URL for proxy
+      window.currentInstagramUrl = url;
+      
       // Process the data
       const mediaData = data.data;
       const downloadUrls = mediaData.downloadUrls || [];
@@ -318,7 +269,8 @@ window.fetchContent = async function() {
       // Check if it's video
       const isVideo = url.includes('/reel/') || 
                      (downloadUrls.length > 0 && downloadUrls[0].type === 'video') ||
-                     (downloadUrls.length > 0 && downloadUrls[0].ext === 'mp4');
+                     (downloadUrls.length > 0 && downloadUrls[0].ext === 'mp4') ||
+                     mediaData.mediaType === 'video';
       
       // Get first media URL
       const mainMedia = downloadUrls.length > 0 ? downloadUrls[0] : null;
@@ -331,10 +283,11 @@ window.fetchContent = async function() {
         comment_count: mediaData.comment_count || 0,
         taken_at: mediaData.taken_at || Math.floor(Date.now() / 1000),
         downloadUrl: mainMedia ? mainMedia.url : '',
-        thumbnail: mainMedia ? mainMedia.thumb : '',
+        thumbnail: mainMedia ? mainMedia.thumb : mediaData.thumbnail || '',
         downloadUrls: downloadUrls,
         isVideo: isVideo,
-        source: url
+        source: url,
+        apiUsed: mediaData.apiUsed || 'API'
       };
       
       showResult(displayData);
@@ -348,10 +301,12 @@ window.fetchContent = async function() {
         username: displayData.username
       });
       
+      showToast(`Fetched using ${displayData.apiUsed}`, 'success');
+      
       // Auto download if setting is enabled
       if (settings.autoDownload && mainMedia) {
         setTimeout(() => {
-          downloadFile(mainMedia.url, `instagram-media.${mainMedia.ext || (isVideo ? 'mp4' : 'jpg')}`);
+          downloadFile(mainMedia.url, `instagram-video-${Date.now()}.mp4`);
         }, 500);
       }
     } else {
@@ -422,6 +377,13 @@ function showResult(data) {
     `;
   }
   
+  // API used badge
+  const apiBadge = data.apiUsed ? `
+    <div style="text-align: center; margin-top: 8px; font-size: 11px; color: var(--text-secondary);">
+      <i class="bi bi-cloud-check"></i> via ${data.apiUsed}
+    </div>
+  ` : '';
+  
   // Determine file extension for main download
   const mainExt = isVideo ? 'mp4' : 'jpg';
   
@@ -444,21 +406,19 @@ function showResult(data) {
         </div>
       </div>
       
-      <div class="preview-media" style="cursor: pointer;" onclick="downloadFile('${data.downloadUrl}', 'instagram-media.${mainExt}')">
+      <div class="preview-media">
         ${isVideo 
-          ? `<video src="${data.downloadUrl}" controls class="preview-image" poster="${data.thumbnail}" style="max-height: 400px; width: 100%;" onclick="event.stopPropagation()"></video>`
+          ? `<video src="${data.downloadUrl}" controls class="preview-image" poster="${data.thumbnail}" style="max-height: 400px; width: 100%;"></video>`
           : `<img src="${data.downloadUrl || data.thumbnail}" alt="Preview" class="preview-image" style="max-height: 400px;">`
         }
-        <div style="text-align: center; margin-top: 8px; color: var(--accent); font-size: 12px;">
-          <i class="bi bi-download"></i> Tap to download
-        </div>
       </div>
       
+      ${apiBadge}
       ${isMultipleMedia ? galleryHtml : ''}
       ${downloadOptionsHtml}
       
       <div class="preview-actions">
-        <button class="btn" onclick="downloadFile('${data.downloadUrl}', 'instagram-media.${mainExt}')">
+        <button class="btn" onclick="downloadFile('${data.downloadUrl}', 'instagram-video-${Date.now()}.${mainExt}')">
           <i class="bi bi-download"></i> Download HD
         </button>
         <button class="btn btn-secondary" onclick="resetDownload()">
@@ -542,7 +502,7 @@ window.clearHistory = function() {
 
 function addToHistory(item) {
   downloadHistory.unshift(item);
-  downloadHistory = downloadHistory.slice(0, 20); // Keep last 20
+  downloadHistory = downloadHistory.slice(0, 20);
   localStorage.setItem('downloadHistory', JSON.stringify(downloadHistory));
 }
 
@@ -625,7 +585,6 @@ function setupSettingsListeners() {
     darkModeToggle.addEventListener('change', (e) => {
       settings.darkMode = e.target.checked;
       localStorage.setItem('settings', JSON.stringify(settings));
-      // Apply theme change
       document.body.style.background = settings.darkMode ? '#000' : '#fff';
       document.body.style.color = settings.darkMode ? '#fff' : '#000';
     });
