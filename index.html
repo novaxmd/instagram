@@ -2,14 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Instagram Downloader</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Instagram Downloader - Download Reels, Photos & Videos</title>
+  
+  <!-- Meta Tags -->
+  <meta name="description" content="Download Instagram reels, photos & videos in HD quality. Fast, secure & completely free. No watermark!">
+  <meta name="keywords" content="Instagram downloader, download instagram, download reels, download ig photo, instagram video, reels downloader">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <!-- Open Graph / Social Media -->
+  <meta property="og:title" content="Instagram Downloader">
+  <meta property="og:description" content="Download Instagram reels, photos & videos in HD quality">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://cdn-icons-png.flaticon.com/512/2111/2111463.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <!-- Favicon / Icons -->
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2111/2111463.png">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2111/2111463.png">
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <!-- SweetAlert2 for beautiful alerts -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css">
+  
+  <style>
+    /* Font override */
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    /* Prevent pull-to-refresh on mobile */
+    body {
+      overscroll-behavior-y: contain;
+    }
+    
+    /* Better touch targets */
+    button, .nav-item, .history-item, .gallery-item {
+      touch-action: manipulation;
+    }
+    
+    /* Loading overlay fix */
+    .loading-state {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+    }
+  </style>
 </head>
 <body>
   <div class="app-container">
-    <!-- Navigation Bar - Bottom (kama kwenye picha) -->
+    <!-- Bottom Navigation Bar - Kama kwenye picha -->
     <nav class="bottom-nav">
       <a href="#" class="nav-item active" data-page="home">
         <i class="bi bi-house-door-fill"></i>
@@ -29,12 +83,133 @@
       </a>
     </nav>
 
-    <!-- Main Content - Hii itabadilika kulingana na page -->
+    <!-- Main Content - Dynamic Content Loading -->
     <main class="main-content" id="mainContent">
       <!-- Content loaded dynamically via JavaScript -->
+      <div class="hero-section">
+        <h1 class="hero-title">
+          <i class="bi bi-instagram"></i>
+          Download Instagram Content
+        </h1>
+        <p class="hero-subtitle">Fast, secure & completely free. No watermark!</p>
+        
+        <button class="btn" onclick="loadPage('download')">
+          <i class="bi bi-play-fill"></i> Start Downloading
+        </button>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="bi bi-camera-reels-fill"></i>
+          </div>
+          <h3>Reels & Videos</h3>
+          <p>Download HD reels & videos instantly</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon posts">
+            <i class="bi bi-images"></i>
+          </div>
+          <h3>Posts & Photos</h3>
+          <p>Save images & carousel posts</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon stories">
+            <i class="bi bi-play-btn-fill"></i>
+          </div>
+          <h3>Stories & IGTV</h3>
+          <p>Get stories & IGTV videos</p>
+        </div>
+      </div>
+
+      <div class="how-it-works">
+        <h2 class="section-title">How It Works</h2>
+        
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <i class="bi bi-copy"></i>
+              <p>Copy Instagram post or reel URL</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <i class="bi bi-paste"></i>
+              <p>Paste URL & click Fetch Content</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <i class="bi bi-cloud-download"></i>
+              <p>Preview & download in HD</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
+
+    <!-- Loading Overlay (Hidden by default) -->
+    <div id="loadingState" class="loading-state hidden">
+      <div class="spinner"></div>
+      <p>Processing...</p>
+    </div>
   </div>
 
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="pages/script.js"></script>
+  
+  <!-- Service Worker Registration for PWA (Optional) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(err => {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+    
+    // Prevent zoom on double tap for better mobile experience
+    document.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+    
+    // Handle back button on Android
+    window.addEventListener('popstate', (event) => {
+      // Go to home page when back button pressed
+      loadPage('home');
+      // Update active nav
+      document.querySelectorAll('.nav-item').forEach(item => {
+        if (item.dataset.page === 'home') {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+    });
+    
+    // Push initial state
+    history.pushState({ page: 'home' }, '', '/');
+  </script>
+  
+  <!-- Google Analytics (Optional - Remove if not needed) -->
+  <!-- 
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+  -->
 </body>
 </html>
