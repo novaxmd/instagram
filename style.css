@@ -40,9 +40,78 @@ body {
 .app-container {
   max-width: 480px;
   margin: 0 auto;
-  padding: 20px 16px 80px;
+  padding: 90px 16px 80px; /* Increased top padding for top bar */
   position: relative;
   min-height: 100vh;
+}
+
+/* ==================== TOP BAR (LOGO + INSTALL BUTTON) ==================== */
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1001;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(152, 255, 152, 0.3);
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--accent);
+  text-shadow: 0 2px 5px rgba(152, 255, 152, 0.3);
+}
+
+.install-btn {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(152, 255, 152, 0.3);
+}
+
+.install-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(152, 255, 152, 0.5);
+}
+
+.install-btn:active {
+  transform: translateY(0);
+}
+
+.install-btn i {
+  font-size: 18px;
 }
 
 /* ==================== BOTTOM NAVIGATION ==================== */
@@ -60,7 +129,7 @@ body {
   max-width: 480px;
   margin: 0 auto;
   backdrop-filter: blur(10px);
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .nav-item {
@@ -494,12 +563,6 @@ body {
   flex-direction: column;
   justify-content: center;
   background: var(--bg-primary);
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.preview-media:hover {
-  background: rgba(152, 255, 152, 0.05);
 }
 
 .preview-image {
@@ -517,11 +580,6 @@ body {
   border-radius: 16px;
   background: #000;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-}
-
-.preview-media .bi-download {
-  color: var(--accent);
-  font-size: 14px;
 }
 
 .preview-actions {
@@ -924,11 +982,20 @@ input:checked + .slider:before {
   .hero-title {
     font-size: 24px;
   }
+  
+  .logo-text {
+    font-size: 16px;
+  }
+  
+  .install-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 480px) {
   .app-container {
-    padding: 16px 12px 80px;
+    padding: 90px 12px 80px;
   }
   
   .btn {
@@ -938,6 +1005,15 @@ input:checked + .slider:before {
   
   .gallery-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .top-bar {
+    padding: 8px 12px;
+  }
+  
+  .nav-logo {
+    width: 32px;
+    height: 32px;
   }
 }
 
@@ -1006,12 +1082,17 @@ video::-webkit-media-controls-play-button {
   color: var(--accent);
 }
 
-/* ==================== FOOTER (kama itahitajika) ==================== */
-.app-footer {
-  margin-top: 40px;
-  padding: 20px;
-  text-align: center;
-  color: var(--text-secondary);
-  font-size: 12px;
-  border-top: 1px solid var(--border);
+/* ==================== INSTALL BUTTON ANIMATION ==================== */
+@keyframes pulse-install {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.install-btn {
+  animation: pulse-install 2s infinite;
+}
+
+.install-btn:hover {
+  animation: none;
 }
