@@ -1,20 +1,14 @@
 {
   "name": "instagram-downloader",
   "version": "1.0.0",
-  "description": "Instagram content downloader - No watermark, free & fast",
+  "description": "Download Instagram content without watermark",
   "main": "index.js",
   "scripts": {
     "dev": "vercel dev",
     "build": "echo 'Static site, no build needed'",
     "start": "vercel start"
   },
-  "keywords": [
-    "instagram",
-    "downloader",
-    "reels",
-    "photos",
-    "videos"
-  ],
+  "keywords": ["instagram", "downloader", "reels"],
   "author": "Your Name",
   "license": "MIT",
   "devDependencies": {
