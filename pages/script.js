@@ -188,22 +188,18 @@ function formatDateFromUnix(timestamp) {
   });
 }
 
-// ==================== DOWNLOAD FUNCTION - KAMA SERVER.JS ====================
-window.downloadFile = async function(url, filename) {
+// ==================== DOWNLOAD FUNCTION - KAMA SERVER.JS (Download Manager) ====================
+window.downloadFile = function(url, filename) {
   try {
-    // Show loading
-    const loadingEl = document.getElementById('loadingState');
-    if (loadingEl) loadingEl.classList.remove('hidden');
-    
     console.log('Downloading:', url);
     console.log('Filename:', filename);
     
-    // Create download URL through our proxy (kama server.js)
+    // Create download URL through our proxy (kama server.js inavyofanya)
     const proxyUrl = `/api/proxy-download?url=${encodeURIComponent(url)}&originalUrl=${encodeURIComponent(window.currentInstagramUrl || '')}`;
     
-    // METHOD 1: Direct proxy download (kama server.js inavyofanya)
+    // METHOD: Direct link - Hii inaamsha download manager ya Chrome
     const link = document.createElement('a');
-    link.href = proxyUrl;
+    link.href = proxyUrl; // Tumia proxy kama server.js
     link.download = filename;
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
@@ -215,18 +211,14 @@ window.downloadFile = async function(url, filename) {
     // Clean up
     setTimeout(() => {
       document.body.removeChild(link);
-      if (loadingEl) loadingEl.classList.add('hidden');
-    }, 2000);
+    }, 1000);
     
-    // Show success message
-    showToast('Download started! Check your downloads folder.', 'success');
+    // Show toast - lakini download manager itaonyesha yake pia
+    showToast('Download started via Download Manager', 'success');
     
   } catch (err) {
     console.error('Download error:', err);
-    
-    // Fallback
     showToast('Download failed. Try again.', 'error');
-    if (loadingEl) loadingEl.classList.add('hidden');
   }
 }
 
