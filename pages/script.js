@@ -15,6 +15,12 @@ const navItems = document.querySelectorAll('.nav-item');
 document.addEventListener('DOMContentLoaded', () => {
   loadPage('home');
   setupEventListeners();
+  
+  // Check if app is installed
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    const installBtn = document.getElementById('installBtn');
+    if (installBtn) installBtn.style.display = 'none';
+  }
 });
 
 function setupEventListeners() {
@@ -55,7 +61,7 @@ function renderHomePage() {
   const html = `
     <div class="hero-section">
       <h1 class="hero-title">
-        <i class="bi bi-instagram"></i>
+        <img src="/pages/logo.png" alt="Logo" style="width: 40px; height: 40px; border-radius: 12px;">
         Download Instagram Content
       </h1>
       <p class="hero-subtitle">Fast, secure & completely free. No watermark!</p>
@@ -391,7 +397,7 @@ function showResult(data) {
     <div class="preview-card">
       <div class="preview-header">
         <div class="preview-avatar">
-          <i class="bi bi-person-circle"></i>
+          <img src="/pages/logo.png" alt="Logo" style="width: 60px; height: 60px; border-radius: 30px; object-fit: cover;">
         </div>
         <div class="preview-info">
           <h4>@${data.username}</h4>
@@ -444,7 +450,7 @@ function renderHistoryPage() {
   if (downloadHistory.length === 0) {
     historyHtml = `
       <div class="empty-state">
-        <i class="bi bi-clock-history empty-icon"></i>
+        <img src="/pages/logo.png" alt="Logo" style="width: 80px; height: 80px; border-radius: 20px; margin-bottom: 10px;">
         <h3>No History Yet</h3>
         <p>Your downloaded content will appear here</p>
         <button class="btn" onclick="loadPage('download')">
@@ -461,7 +467,7 @@ function renderHistoryPage() {
         ${downloadHistory.map((item, index) => `
           <div class="history-item" onclick="reDownload('${item.url}')" style="cursor: pointer;">
             <div class="history-icon">
-              <i class="bi ${item.type === 'Reel' ? 'bi-camera-reels' : 'bi-file-image'}"></i>
+              <img src="/pages/logo.png" alt="Logo" style="width: 56px; height: 56px; border-radius: 16px; object-fit: cover;">
             </div>
             <div class="history-details">
               <div class="history-url">${item.title || item.url.substring(0, 50)}...</div>
@@ -517,7 +523,7 @@ function renderSettingsPage() {
       <!-- Dark Mode -->
       <div class="setting-item">
         <div class="setting-info">
-          <i class="bi bi-moon-stars"></i>
+          <img src="/pages/logo.png" alt="Logo" style="width: 40px; height: 40px; border-radius: 12px;">
           <div>
             <h3>Dark Mode</h3>
             <p>Switch between themes</p>
@@ -564,7 +570,7 @@ function renderSettingsPage() {
       <div class="about-section">
         <h3>About</h3>
         <p class="about-text">
-          <i class="bi bi-instagram"></i>
+          <img src="/pages/logo.png" alt="Logo" style="width: 60px; height: 60px; border-radius: 16px; margin-bottom: 10px;">
           Download Instagram reels, posts & videos in HD.<br>
           100% Free - HD Quality - No Watermark
         </p>
