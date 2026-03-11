@@ -182,37 +182,122 @@ function formatDateFromUnix(timestamp) {
   });
 }
 
-// Download file function
+// ==================== DOWNLOAD FUNCTION - IMEBORESHA KWA SIMU ====================
 window.downloadFile = async function(url, filename) {
   try {
-    document.getElementById('loadingState').classList.remove('hidden');
+    // Show loading
+    const loadingEl = document.getElementById('loadingState');
+    if (loadingEl) loadingEl.classList.remove('hidden');
     
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(blobUrl);
+    console.log('Downloading:', url, 'as:', filename);
     
-    alert('Download started!');
+    // Check if it's a video file
+    const isVideo = filename.endsWith('.mp4') || filename.endsWith('.mov') || filename.endsWith('.avi') || url.includes('.mp4');
+    
+    // Detect if mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // SOLUTION 1: Direct link approach - BEST FOR MOBILE
+    if (isMobile) {
+      // Create invisible anchor
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename; // This works on many mobile browsers
+      link.target = '_blank'; // Fallback for iOS
+      link.rel = 'noopener noreferrer';
+      
+      // Make it work on all mobile devices
+      document.body.appendChild(link);
+      
+      // Trigger click
+      link.click();
+      
+      // For iOS, also try opening in new tab
+      if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        setTimeout(() => {
+          window.open(url, '_blank');
+        }, 300);
+      }
+      
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(link);
+      }, 1000);
+      
+      // Show success message
+      showToast('Download started! Check your downloads folder.', 'success');
+    } 
+    // SOLUTION 2: Blob method for desktop
+    else {
+      try {
+        const response = await fetch(url, {
+          mode: 'cors',
+          headers: {
+            'Accept': 'video/mp4, video/*, image/*'
+          }
+        });
+        
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Clean up
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(blobUrl);
+        }, 100);
+        
+        showToast('Download started!', 'success');
+      } catch (blobError) {
+        console.error('Blob download failed, trying direct link:', blobError);
+        // Fallback to direct link
+        window.open(url, '_blank');
+        showToast('Opening in new tab...', 'info');
+      }
+    }
+    
   } catch (err) {
-    alert('Download failed. Opening in new tab...');
+    console.error('Download error:', err);
+    
+    // Final fallback
+    showToast('Download failed. Opening in new tab...', 'warning');
     window.open(url, '_blank');
+    
   } finally {
-    document.getElementById('loadingState').classList.add('hidden');
+    // Hide loading
+    const loadingEl = document.getElementById('loadingState');
+    if (loadingEl) loadingEl.classList.add('hidden');
   }
 }
 
-// Fetch content function - IMEBORESHA KABISA
+// Helper function for toast messages
+function showToast(message, type = 'success') {
+  if (typeof Swal !== 'undefined') {
+    Swal.fire({
+      title: message,
+      icon: type,
+      toast: true,
+      position: 'top',
+      showConfirmButton: false,
+      timer: 2000
+    });
+  } else {
+    alert(message);
+  }
+}
+
+// ==================== FETCH CONTENT FUNCTION ====================
 window.fetchContent = async function() {
   const url = document.getElementById('instagramUrl').value.trim();
   
   if (!url || url === 'https://www.instagram.com/reel/xxxx/') {
-    alert('Please enter a valid Instagram URL');
+    showToast('Please enter a valid Instagram URL', 'warning');
     return;
   }
 
@@ -221,7 +306,7 @@ window.fetchContent = async function() {
   document.getElementById('resultArea').classList.add('hidden');
 
   try {
-    // Call API - inatumia API ile ile kama kwenye code yako
+    // Call API
     const response = await fetch(`/api/api.js?url=${encodeURIComponent(url)}`);
     const data = await response.json();
     
@@ -232,7 +317,8 @@ window.fetchContent = async function() {
       
       // Check if it's video
       const isVideo = url.includes('/reel/') || 
-                     (downloadUrls.length > 0 && downloadUrls[0].type === 'video');
+                     (downloadUrls.length > 0 && downloadUrls[0].type === 'video') ||
+                     (downloadUrls.length > 0 && downloadUrls[0].ext === 'mp4');
       
       // Get first media URL
       const mainMedia = downloadUrls.length > 0 ? downloadUrls[0] : null;
@@ -261,18 +347,25 @@ window.fetchContent = async function() {
         title: displayData.title,
         username: displayData.username
       });
+      
+      // Auto download if setting is enabled
+      if (settings.autoDownload && mainMedia) {
+        setTimeout(() => {
+          downloadFile(mainMedia.url, `instagram-media.${mainMedia.ext || (isVideo ? 'mp4' : 'jpg')}`);
+        }, 500);
+      }
     } else {
       throw new Error(data.error || 'Failed to fetch');
     }
   } catch (error) {
-    alert('Error: ' + error.message);
     console.error('Fetch error:', error);
+    showToast('Error: ' + error.message, 'error');
   } finally {
     document.getElementById('loadingState').classList.add('hidden');
   }
 }
 
-// Show result function
+// ==================== SHOW RESULT FUNCTION ====================
 function showResult(data) {
   const resultArea = document.getElementById('resultArea');
   const isVideo = data.isVideo;
@@ -289,15 +382,15 @@ function showResult(data) {
         </h4>
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
           ${downloadUrls.map((item, index) => {
-            const isItemVideo = item.type === 'video';
+            const itemIsVideo = item.type === 'video' || item.ext === 'mp4';
             return `
-              <div style="position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; background: #222;">
+              <div style="position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; background: #222; cursor: pointer;" 
+                   onclick="downloadFile('${item.url}', 'instagram-${index+1}.${item.ext}')">
                 <img src="${item.thumb || item.url}" style="width: 100%; height: 100%; object-fit: cover;">
-                ${isItemVideo ? '<i class="bi bi-play-circle-fill" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px;"></i>' : ''}
-                <button onclick="downloadFile('${item.url}', 'instagram-${index+1}.${item.ext}')" 
-                        style="position: absolute; bottom: 4px; right: 4px; background: var(--accent); border: none; border-radius: 4px; padding: 6px; cursor: pointer;">
-                  <i class="bi bi-download" style="color: black; font-size: 14px;"></i>
-                </button>
+                ${itemIsVideo ? '<i class="bi bi-play-circle-fill" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px; text-shadow: 0 2px 5px rgba(0,0,0,0.5);"></i>' : ''}
+                <div style="position: absolute; bottom: 4px; right: 4px; background: var(--accent); border-radius: 4px; padding: 4px;">
+                  <i class="bi bi-download" style="color: black; font-size: 12px;"></i>
+                </div>
               </div>
             `;
           }).join('')}
@@ -316,7 +409,7 @@ function showResult(data) {
         </h4>
         <div style="display: flex; flex-direction: column; gap: 8px;">
           ${downloadUrls.map((item, index) => {
-            const itemIsVideo = item.type === 'video';
+            const itemIsVideo = item.type === 'video' || item.ext === 'mp4';
             return `
               <button class="btn btn-secondary" style="width: 100%;" onclick="downloadFile('${item.url}', 'instagram-${index+1}.${item.ext}')">
                 <i class="bi ${itemIsVideo ? 'bi-play-circle' : 'bi-image'}"></i>
@@ -328,6 +421,9 @@ function showResult(data) {
       </div>
     `;
   }
+  
+  // Determine file extension for main download
+  const mainExt = isVideo ? 'mp4' : 'jpg';
   
   resultArea.innerHTML = `
     <div class="preview-card">
@@ -348,18 +444,21 @@ function showResult(data) {
         </div>
       </div>
       
-      <div class="preview-media">
+      <div class="preview-media" style="cursor: pointer;" onclick="downloadFile('${data.downloadUrl}', 'instagram-media.${mainExt}')">
         ${isVideo 
-          ? `<video src="${data.downloadUrl}" controls class="preview-image" poster="${data.thumbnail}" style="max-height: 400px;"></video>`
+          ? `<video src="${data.downloadUrl}" controls class="preview-image" poster="${data.thumbnail}" style="max-height: 400px; width: 100%;" onclick="event.stopPropagation()"></video>`
           : `<img src="${data.downloadUrl || data.thumbnail}" alt="Preview" class="preview-image" style="max-height: 400px;">`
         }
+        <div style="text-align: center; margin-top: 8px; color: var(--accent); font-size: 12px;">
+          <i class="bi bi-download"></i> Tap to download
+        </div>
       </div>
       
       ${isMultipleMedia ? galleryHtml : ''}
       ${downloadOptionsHtml}
       
       <div class="preview-actions">
-        <button class="btn" onclick="downloadFile('${data.downloadUrl}', 'instagram-media.${isVideo ? 'mp4' : 'jpg'}')">
+        <button class="btn" onclick="downloadFile('${data.downloadUrl}', 'instagram-media.${mainExt}')">
           <i class="bi bi-download"></i> Download HD
         </button>
         <button class="btn btn-secondary" onclick="resetDownload()">
@@ -372,6 +471,7 @@ function showResult(data) {
   resultArea.classList.remove('hidden');
 }
 
+// Reset download function
 window.resetDownload = function() {
   document.getElementById('instagramUrl').value = 'https://www.instagram.com/reel/xxxx/';
   document.getElementById('resultArea').classList.add('hidden');
@@ -399,7 +499,7 @@ function renderHistoryPage() {
       </div>
       <div class="history-list">
         ${downloadHistory.map((item, index) => `
-          <div class="history-item">
+          <div class="history-item" onclick="reDownload('${item.url}')" style="cursor: pointer;">
             <div class="history-icon">
               <i class="bi ${item.type === 'Reel' ? 'bi-camera-reels' : 'bi-file-image'}"></i>
             </div>
@@ -411,13 +511,13 @@ function renderHistoryPage() {
                 <span>@${item.username || 'user'}</span>
               </div>
             </div>
-            <button class="btn btn-small" onclick="reDownload('${item.url}')">
+            <button class="btn btn-small" onclick="event.stopPropagation(); reDownload('${item.url}')">
               <i class="bi bi-download"></i>
             </button>
           </div>
         `).join('')}
       </div>
-      <button class="btn btn-secondary mt-4" onclick="clearHistory()">
+      <button class="btn btn-secondary mt-4" onclick="event.stopPropagation(); clearHistory()">
         <i class="bi bi-trash"></i> Clear History
       </button>
     `;
@@ -436,6 +536,7 @@ window.clearHistory = function() {
     downloadHistory = [];
     localStorage.setItem('downloadHistory', JSON.stringify(downloadHistory));
     renderHistoryPage();
+    showToast('History cleared!', 'success');
   }
 }
 
@@ -546,6 +647,7 @@ function setupSettingsListeners() {
       btn.classList.add('active');
       settings.quality = btn.dataset.quality;
       localStorage.setItem('settings', JSON.stringify(settings));
+      showToast(`Quality set to ${btn.dataset.quality}`, 'success');
     });
   });
 }
